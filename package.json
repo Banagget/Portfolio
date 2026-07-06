@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "tsc -p tsconfig.app.json && vite build",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
+  "homepage": "./",
   "dependencies": {
     "@react-three/drei": "^10.0.0",
     "@react-three/fiber": "^9.0.0",
@@ -24,6 +27,7 @@
     "@types/three": "^0.174.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "gh-pages": "^5.0.0",
     "postcss": "^8.5.3",
     "tailwindcss": "3.4.17",
     "typescript": "^5.7.3",

@@ -3,3 +3,14 @@ dist/
 .npm-cache/
 .DS_Store
 *.local
+
+# Local tooling/cache folders
+.agents/
+.codex/
+.edge-profile*/
+.tmp-crops/
+.vercel-data/
+.vercel-local/
+tmp-contact-sheets/
+tmp-reference-crops/
+kube-repo/

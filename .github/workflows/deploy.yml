@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Avoid failing when a submodule is present without a URL in .gitmodules
+          submodules: false
+          # Fetch full history so deployments/tools that expect tags/commits work
+          fetch-depth: 0
 
       - name: Use Node.js
         uses: actions/setup-node@v4

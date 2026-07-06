@@ -1,3 +1,5 @@
+import { publicAsset } from "./assetPath";
+
 type StaticPageKey = "clce" | "leaps" | "skills";
 
 const staticPages: Record<
@@ -11,17 +13,17 @@ const staticPages: Record<
   clce: {
     alt: "Contributions, Leadership and Community Engagements portfolio page",
     className: "clce-reference-page",
-    src: "/page-assets/clce/reference-no-buttons.png",
+    src: publicAsset("/page-assets/clce/reference-no-buttons.png"),
   },
   leaps: {
     alt: "LEAPS portfolio page",
     className: "leaps-reference-page",
-    src: "/page-assets/leaps/reference.png",
+    src: publicAsset("/page-assets/leaps/reference.png"),
   },
   skills: {
     alt: "Skills and Development portfolio page",
     className: "skills-reference-page",
-    src: "/page-assets/skills/reference.png",
+    src: publicAsset("/page-assets/skills/reference.png"),
   },
 };
 
@@ -38,14 +40,14 @@ export function StaticReferencePage({ page }: { page: StaticPageKey }) {
 }
 
 export function TestimonialPage() {
-  const testimonialSrc = "/documents/Lin Zhiyuan Testimonial EAE.pdf";
+  const testimonialSrc = publicAsset("/documents/Lin Zhiyuan Testimonial EAE.pdf");
 
   return (
     <section className="testimonial-page testimonial-reference-page" aria-label="Testimonial">
       <div className="reference-sheet testimonial-reference-sheet">
         <img
           className="reference-sheet-image"
-          src="/page-assets/testimonial/reference-no-buttons.png"
+          src={publicAsset("/page-assets/testimonial/reference-no-buttons.png")}
           alt="Testimonial heading written by my Robotics CCA Coach"
           loading="eager"
           decoding="async"

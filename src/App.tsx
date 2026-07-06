@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowUp } from "lucide-react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Link, Route, Routes, useLocation } from "react-router-dom";
 import Competitions from "./Competitions";
 import Projects from "./Projects";
 import { StaticReferencePage, TestimonialPage } from "./ReferencePages";
+import { publicAsset } from "./assetPath";
 
 const navItems = [
   { label: "Competitions", href: "/competitions" },
@@ -135,16 +136,16 @@ export default function App() {
         className={`site-nav${isNavCompact ? " is-compact" : ""}`}
         aria-label="Primary navigation"
       >
-        <motion.a 
+        <motion.div 
           className="liquid-glass nav-home-button" 
-          href="/" 
+           
           aria-current={location.pathname === "/" ? "page" : undefined}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
-          Home
-        </motion.a>
+          <Link to="/" className="nav-home-link">Home</Link>
+        </motion.div>
 
         <motion.div
           className="nav-right"
@@ -155,10 +156,10 @@ export default function App() {
           <div className="liquid-glass nav-glass nav-desktop-links">
             <div className="nav-links">
               {navItems.map((item) => (
-                <a
+                <Link
                   key={item.href}
                   className="nav-link"
-                  href={item.href}
+                  to={item.href}
                   onFocus={() => setHoveredNav(item.href)}
                   onPointerEnter={() => setHoveredNav(item.href)}
                 >
@@ -174,7 +175,7 @@ export default function App() {
                     />
                   )}
                   <span className="nav-link-text">{item.label}</span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -187,7 +188,7 @@ export default function App() {
             aria-controls="compact-navigation"
             onClick={() => setIsMenuOpen((current) => !current)}
           >
-            <img src="/MenuIcon.png" alt="" aria-hidden="true" />
+            <img src={publicAsset("/MenuIcon.png")} alt="" aria-hidden="true" />
           </motion.button>
 
           <div
@@ -197,14 +198,14 @@ export default function App() {
           >
             <div className="compact-menu-links">
               {navItems.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 className="compact-menu-link"
-                href={item.href}
+                to={item.href}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}
-              </a>
+              </Link>
               ))}
             </div>
           </div>
@@ -257,7 +258,7 @@ function HomePage() {
           <br />
           Portfolio
         </h1>
-        <img className="profile-image" src="/Profile.png" alt="Zhiyuan smiling while holding a folder" />
+        <img className="profile-image" src={publicAsset("/Profile.png")} alt="Zhiyuan smiling while holding a folder" />
       </section>
 
       <section className="about-section" aria-label="About me">
@@ -295,7 +296,7 @@ function HomePage() {
           </div>
         </div>
 
-        <img className="bugatti-image" src="/Bugatti.png" alt="Zhiyuan working on a blue LEGO Bugatti model" />
+        <img className="bugatti-image" src={publicAsset("/Bugatti.png")} alt="Zhiyuan working on a blue LEGO Bugatti model" />
       </section>
     </>
   );

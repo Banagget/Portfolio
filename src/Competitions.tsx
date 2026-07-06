@@ -1,17 +1,18 @@
 import { Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
+import { publicAsset } from "./assetPath";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Environment, Html, OrbitControls, useGLTF } from "@react-three/drei";
 import { Box, ExternalLink, Maximize2, Minimize2, PlayCircle, X } from "lucide-react";
 import type { Color, Material, Object3D } from "three";
 
-const imageBase = "/competitions/";
-const videoBase = "/project-videos/";
+const imageBase = publicAsset("/competitions/");
+const videoBase = publicAsset("/project-videos/");
 
 const scubathonLumaSrc =
   "https://lumalabs.ai/embed/6741b8ca-8649-41c9-8dc2-73d3f3278f77?mode=sparkles&background=%23ffffff&color=%23000000&showTitle=true&loadBg=true&logoPosition=bottom-left&infoPosition=bottom-right&cinematicVideo=undefined&showMenu=false";
 const wroRobotLumaSrc =
   "https://lumalabs.ai/embed/51b48e56-92dd-4923-b213-1d408d253b8a?mode=sparkles&background=%23ffffff&color=%23000000&showTitle=true&loadBg=true&logoPosition=bottom-left&infoPosition=bottom-right&cinematicVideo=undefined&showMenu=false";
-const wroRobotGlbSrc = "/models/WRO2025_Robot.glb";
+const wroRobotGlbSrc = publicAsset("/models/WRO2025_Robot.glb");
 
 type ImageModalContent = {
   alt?: string;
@@ -730,7 +731,7 @@ export default function Competitions() {
         <div className="reference-sheet competition-reference-sheet">
           <img
             className="reference-sheet-image"
-            src="/page-assets/competitions/reference-no-buttons.png"
+            src={publicAsset("/page-assets/competitions/reference-no-buttons.png")}
             alt="Competitions portfolio page"
             loading="eager"
             decoding="async"

@@ -2481,3 +2481,9 @@ h1 {
     height: 76vh;
   }
 }
+
+.nav-home-link {
+  color: inherit;
+  text-decoration: none;
+}
+

@@ -1,12 +1,13 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
+import { publicAsset } from "./assetPath";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Environment, Html, OrbitControls, useGLTF } from "@react-three/drei";
 import { Box, Maximize2, Minimize2, X } from "lucide-react";
 import type { Color, Material, Object3D } from "three";
 
-const imageBase = "/page-assets/projects/";
-const legacyImageBase = "/projects/";
-const handleModelSrc = "/models/Handle.glb";
+const imageBase = publicAsset("/page-assets/projects/");
+const legacyImageBase = publicAsset("/projects/");
+const handleModelSrc = publicAsset("/models/Handle.glb");
 
 type TunableMaterial = Material & {
   color?: Color;
@@ -391,7 +392,7 @@ export default function Projects() {
         <div className="reference-sheet projects-reference-sheet">
           <img
             className="reference-sheet-image"
-            src="/page-assets/projects/reference-no-buttons.png"
+            src={publicAsset("/page-assets/projects/reference-no-buttons.png")}
             alt="Projects portfolio page"
             loading="eager"
             decoding="async"

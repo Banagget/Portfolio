@@ -1,0 +1,15 @@
+[2026-06-27T14:32:41.632Z] [debug] Notifying parent we're ready
+[2026-06-27T14:32:41.671Z] [debug] Received message from parent: {
+  cacheFile: 'C:\\Users\\linzh\\Documents\\New folder\\.vercel-local\\com.vercel.cli\\Cache\\package-updates\\vercel-latest.json',
+  distTag: 'latest',
+  name: 'vercel',
+  updateCheckInterval: 86400000
+}
+[2026-06-27T14:32:41.671Z] [debug] Disconnecting from parent
+[2026-06-27T14:32:41.673Z] [debug] Checking lock file: C:\Users\linzh\Documents\New folder\.vercel-local\com.vercel.cli\Cache\package-updates\vercel-latest.lock
+[2026-06-27T14:32:41.674Z] [debug] Initializing lock file with pid 57108
+[2026-06-27T14:32:41.675Z] [debug] Fetching dist-tags for vercel
+[2026-06-27T14:32:42.019Z] [debug] Found dist tag "latest" with version "54.18.0"
+[2026-06-27T14:32:42.019Z] [debug] Writing cache file: C:\Users\linzh\Documents\New folder\.vercel-local\com.vercel.cli\Cache\package-updates\vercel-latest.json
+[2026-06-27T14:32:42.020Z] [debug] Releasing lock file: C:\Users\linzh\Documents\New folder\.vercel-local\com.vercel.cli\Cache\package-updates\vercel-latest.lock
+[2026-06-27T14:32:42.020Z] [debug] Worker finished successfully!

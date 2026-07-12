@@ -4,10 +4,17 @@ import { Canvas } from "@react-three/fiber";
 import { Bounds, Environment, Html, OrbitControls, useGLTF } from "@react-three/drei";
 import { Box, Maximize2, Minimize2, X } from "lucide-react";
 import type { Color, Material, Object3D } from "three";
+import { ReferenceImageStack } from "./ReferenceImageStack";
 
 const imageBase = publicAsset("/page-assets/projects/");
 const legacyImageBase = publicAsset("/projects/");
 const handleModelSrc = publicAsset("/models/Handle.glb");
+
+const projectReferenceTiles = Array.from({ length: 4 }, (_, index) => ({
+  src: publicAsset(`/page-assets/projects/tiles/reference-${String(index + 1).padStart(2, "0")}.webp`),
+  width: 2049,
+  height: index === 3 ? 1812 : 2048,
+}));
 
 type TunableMaterial = Material & {
   color?: Color;
@@ -390,13 +397,7 @@ export default function Projects() {
     <>
       <section id="projects" className="reference-page projects-reference-page" aria-label="Projects">
         <div className="reference-sheet projects-reference-sheet">
-          <img
-            className="reference-sheet-image"
-            src={publicAsset("/page-assets/projects/reference-no-buttons.png")}
-            alt="Projects portfolio page"
-            loading="eager"
-            decoding="async"
-          />
+          <ReferenceImageStack alt="Projects portfolio page" tiles={projectReferenceTiles} />
           <button
             className="reference-action-button projects-handle-model-hotspot"
             type="button"

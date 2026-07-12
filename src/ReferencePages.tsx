@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import { publicAsset } from "./assetPath";
 
 type StaticPageKey = "clce" | "leaps" | "skills";
@@ -54,18 +55,13 @@ export function TestimonialPage() {
         />
       </div>
       <div className="testimonial-frame">
-        <div className="testimonial-toolbar">
-          <h2>Coach Testimonial PDF</h2>
-          <div className="testimonial-actions">
-            <a className="competition-action" href={testimonialSrc} download>
-              Download
-            </a>
-            <a className="competition-action" href={testimonialSrc} target="_blank" rel="noreferrer">
-              Open in new tab
-            </a>
-          </div>
-        </div>
         <iframe title="Lin Zhiyuan Testimonial EAE" src={`${testimonialSrc}#view=FitH`} />
+        <div className="testimonial-footer">
+          <a className="competition-action" href={testimonialSrc} download>
+            <Download size={20} aria-hidden="true" />
+            Download
+          </a>
+        </div>
       </div>
     </section>
   );

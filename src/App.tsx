@@ -224,15 +224,6 @@ export default function App() {
         </Routes>
       </div>
 
-      <motion.div
-        key={location.pathname}
-        className="page-fade-cover"
-        initial={{ opacity: 1, y: "0%" }}
-        animate={{ opacity: 0, y: "100%" }}
-        transition={{ duration: 1.65, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-        aria-hidden="true"
-      />
-
       <motion.button
         className={`liquid-glass back-to-top-button${showBackToTop ? " is-visible" : ""}`}
         type="button"

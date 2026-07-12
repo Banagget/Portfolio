@@ -1,9 +1,10 @@
-import { Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { publicAsset } from "./assetPath";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Environment, Html, OrbitControls, useGLTF } from "@react-three/drei";
 import { Box, ExternalLink, Maximize2, Minimize2, PlayCircle, X } from "lucide-react";
 import type { Color, Material, Object3D } from "three";
+import { ReferenceImageStack } from "./ReferenceImageStack";
 
 const imageBase = publicAsset("/competitions/");
 const videoBase = publicAsset("/project-videos/");
@@ -14,6 +15,12 @@ const wroRobotLumaSrc =
   "https://lumalabs.ai/embed/51b48e56-92dd-4923-b213-1d408d253b8a?mode=sparkles&background=%23ffffff&color=%23000000&showTitle=true&loadBg=true&logoPosition=bottom-left&infoPosition=bottom-right&cinematicVideo=undefined&showMenu=false";
 const wroRobotGlbSrc = publicAsset("/models/WRO2025_Robot.glb");
 
+const competitionReferenceTiles = Array.from({ length: 9 }, (_, index) => ({
+  src: publicAsset(`/page-assets/competitions/tiles/reference-${String(index + 1).padStart(2, "0")}.webp`),
+  width: 1708,
+  height: index === 8 ? 789 : 2048,
+}));
+
 type ImageModalContent = {
   alt?: string;
   src: string;
@@ -22,6 +29,10 @@ type ImageModalContent = {
 };
 
 type VideoModalContent = {
+  relatedVideos?: Array<{
+    src: string;
+    title: string;
+  }>;
   src: string;
   title: string;
   type: "video";
@@ -35,6 +46,11 @@ type ModelModalContent = {
 };
 
 type ModalContent = ImageModalContent | VideoModalContent | ModelModalContent;
+
+const fllIndividualRuns = Array.from({ length: 8 }, (_, index) => ({
+  src: `${videoBase}Run${index + 1}.mp4`,
+  title: `Run ${index + 1}`,
+}));
 
 type FigureProps = {
   alt: string;
@@ -205,12 +221,14 @@ function MediaModal({
 }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [modelMode, setModelMode] = useState<"luma" | "glb">("luma");
+  const [videoAspectRatio, setVideoAspectRatio] = useState(16 / 9);
 
   useEffect(() => {
     if (!content) return;
 
     setIsFullscreen(content.type === "video" || content.type === "model");
     setModelMode("luma");
+    setVideoAspectRatio(16 / 9);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
@@ -227,11 +245,22 @@ function MediaModal({
   if (!content) return null;
 
   const hasGlbViewer = content.type === "model" && Boolean(content.glbSrc);
+  const hasVideoGallery = content.type === "video" && Boolean(content.relatedVideos?.length);
+
+  const updateVideoAspectRatio = (video: HTMLVideoElement) => {
+    const { videoHeight, videoWidth } = video;
+    if (videoHeight > 0 && videoWidth > 0) setVideoAspectRatio(videoWidth / videoHeight);
+  };
 
   return (
     <div className="media-modal-backdrop" role="presentation" onMouseDown={onClose}>
       <div
-        className={`media-modal ${isFullscreen ? "is-fullscreen" : ""} ${content.type === "model" ? "is-model-modal" : ""}`}
+        className={`media-modal is-${content.type}-modal ${hasVideoGallery ? "has-video-gallery" : ""} ${isFullscreen ? "is-fullscreen" : ""}`}
+        style={
+          content.type === "video"
+            ? ({ "--video-aspect-ratio": videoAspectRatio } as CSSProperties)
+            : undefined
+        }
         role="dialog"
         aria-modal="true"
         aria-label={content.title}
@@ -261,7 +290,37 @@ function MediaModal({
 
         <div className="media-modal-body">
           {content.type === "video" ? (
-            <video src={content.src} controls autoPlay playsInline />
+            hasVideoGallery ? (
+              <div className="fll-runs-gallery">
+                <section className="fll-full-run" aria-label="Full robot run">
+                  <h4>Full Robot Run</h4>
+                  <video
+                    className="fll-main-run-video"
+                    src={content.src}
+                    controls
+                    autoPlay
+                    playsInline
+                    onLoadedMetadata={(event) => updateVideoAspectRatio(event.currentTarget)}
+                  />
+                </section>
+                <div className="fll-mini-runs" aria-label="Individual robot runs">
+                  {content.relatedVideos?.map((video) => (
+                    <figure className="fll-mini-run" key={video.src}>
+                      <video src={video.src} controls playsInline preload="metadata" title={video.title} />
+                      <figcaption>{video.title}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <video
+                src={content.src}
+                controls
+                autoPlay
+                playsInline
+                onLoadedMetadata={(event) => updateVideoAspectRatio(event.currentTarget)}
+              />
+            )
           ) : content.type === "model" ? (
             <ModelViewer mode={modelMode} model={content} />
           ) : (
@@ -293,7 +352,8 @@ function MechanismText({ children, title }: { children: ReactNode; title: string
 function RealCompetitions() {
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
-  const openVideo = (title: string, src: string) => setModalContent({ title, src, type: "video" });
+  const openVideo = (title: string, src: string, relatedVideos?: VideoModalContent["relatedVideos"]) =>
+    setModalContent({ title, src, relatedVideos, type: "video" });
   const openImage = (title: string, src: string, alt?: string) => setModalContent({ title, src, alt, type: "image" });
   const openModel = (title: string, lumaSrc: string, glbSrc?: string) => setModalContent({ title, lumaSrc, glbSrc, type: "model" });
 
@@ -490,7 +550,7 @@ function RealCompetitions() {
             <div className="award-card">
               <h3>Robot Performance Award</h3>
               <Figure src={`${imageBase}2025-fll-robot-performance-award.png`} alt="2025 FLL Robot Performance Award" />
-              <ActionButton onClick={() => openVideo("2025 FLL Robot Run", `${videoBase}FLL2025_RobotRun.mp4`)}>Click here to watch our robot run!</ActionButton>
+              <ActionButton onClick={() => openVideo("2025 FLL Robot Runs", `${videoBase}FLL2025_RobotRun.mp4`, fllIndividualRuns)}>Click here to watch our robot run!</ActionButton>
             </div>
           </div>
         </article>
@@ -721,7 +781,8 @@ function RealCompetitions() {
 export default function Competitions() {
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
-  const openVideo = (title: string, src: string) => setModalContent({ title, src, type: "video" });
+  const openVideo = (title: string, src: string, relatedVideos?: VideoModalContent["relatedVideos"]) =>
+    setModalContent({ title, src, relatedVideos, type: "video" });
   const openImage = (title: string, src: string, alt?: string) => setModalContent({ title, src, alt, type: "image" });
   const openModel = (title: string, lumaSrc: string, glbSrc?: string) => setModalContent({ title, lumaSrc, glbSrc, type: "model" });
 
@@ -729,13 +790,7 @@ export default function Competitions() {
     <>
       <section id="competitions" className="reference-page competitions-reference-page" aria-label="Competitions">
         <div className="reference-sheet competition-reference-sheet">
-          <img
-            className="reference-sheet-image"
-            src={publicAsset("/page-assets/competitions/reference-no-buttons.png")}
-            alt="Competitions portfolio page"
-            loading="eager"
-            decoding="async"
-          />
+          <ReferenceImageStack alt="Competitions portfolio page" tiles={competitionReferenceTiles} />
           <video
             className="mechanism-video-overlay grab-lift-video-hotspot"
             src={`${videoBase}Grab and Lift.mp4`}
@@ -814,7 +869,7 @@ export default function Competitions() {
             className="reference-action-button fll-2025-run-hotspot"
             type="button"
             aria-label="Watch 2025 FLL robot run"
-            onClick={() => openVideo("2025 FLL Robot Run", `${videoBase}FLL2025_RobotRun.mp4`)}
+            onClick={() => openVideo("2025 FLL Robot Runs", `${videoBase}FLL2025_RobotRun.mp4`, fllIndividualRuns)}
           >
             <PlayCircle aria-hidden="true" />
             Click here to watch our robot run!

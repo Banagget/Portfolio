@@ -18,7 +18,7 @@ const wroRobotGlbSrc = publicAsset("/models/WRO2025_Robot.glb");
 const competitionReferenceTiles = Array.from({ length: 9 }, (_, index) => ({
   src: publicAsset(`/page-assets/competitions/tiles/reference-${String(index + 1).padStart(2, "0")}.webp`),
   width: 1708,
-  height: index === 8 ? 789 : 2048,
+  height: index === 8 ? 825 : 2048,
 }));
 
 type ImageModalContent = {
@@ -29,7 +29,9 @@ type ImageModalContent = {
 };
 
 type VideoModalContent = {
+  galleryOnly?: boolean;
   relatedVideos?: Array<{
+    poster?: string;
     src: string;
     title: string;
   }>;
@@ -49,6 +51,12 @@ type ModalContent = ImageModalContent | VideoModalContent | ModelModalContent;
 
 const fllIndividualRuns = Array.from({ length: 8 }, (_, index) => ({
   src: `${videoBase}Run${index + 1}.mp4`,
+  title: `Run ${index + 1}`,
+}));
+
+const fll2024IndividualRuns = Array.from({ length: 8 }, (_, index) => ({
+  poster: `${videoBase}posters/24run${index + 1}.jpg`,
+  src: `${videoBase}24run${index + 1}.mp4`,
   title: `Run ${index + 1}`,
 }));
 
@@ -87,19 +95,19 @@ function tuneGlbMaterial(material: Material) {
     const hsl = { h: 0, s: 0, l: 0 };
     color.getHSL(hsl);
 
-    if (hsl.l > 0.72) {
-      const lightness = hsl.s > 0.04 ? hsl.l * 0.84 : hsl.l * 0.76;
-      const maxLightness = hsl.s > 0.04 ? 0.86 : 0.8;
-      color.setHSL(hsl.h, Math.min(1, hsl.s * 1.18), Math.min(maxLightness, Math.max(0, lightness)));
-    } else if (hsl.s > 0.04) {
-      color.setHSL(hsl.h, Math.min(1, hsl.s * 1.22), Math.max(0, hsl.l * 0.94));
+    if (hsl.s > 0.08) {
+      color.setHSL(hsl.h, Math.min(1, hsl.s * 0.92), Math.max(0, hsl.l * 0.72));
+    } else if (hsl.l > 0.78) {
+      color.setHSL(hsl.h, hsl.s, 0.56);
+    } else if (hsl.l > 0.55) {
+      color.setHSL(hsl.h, hsl.s, Math.max(0, hsl.l * 0.78));
     } else {
-      color.setHSL(hsl.h, hsl.s, Math.max(0, hsl.l * 0.92));
+      color.setHSL(hsl.h, hsl.s, Math.max(0, hsl.l * 0.9));
     }
   }
 
   if (typeof tunedMaterial.roughness === "number") {
-    tunedMaterial.roughness = Math.max(0.38, tunedMaterial.roughness * 0.82);
+    tunedMaterial.roughness = Math.max(0.58, tunedMaterial.roughness);
   }
 
   if (typeof tunedMaterial.metalness === "number") {
@@ -107,7 +115,7 @@ function tuneGlbMaterial(material: Material) {
   }
 
   if (typeof tunedMaterial.envMapIntensity === "number") {
-    tunedMaterial.envMapIntensity = 0.72;
+    tunedMaterial.envMapIntensity = 0.42;
   }
 
   tunedMaterial.needsUpdate = true;
@@ -164,15 +172,15 @@ function GlbModel({ src }: { src: string }) {
   return <primitive object={tunedScene} />;
 }
 
-function GlbViewer({ src, title }: { src: string; title: string }) {
+export function GlbViewer({ src, title }: { src: string; title: string }) {
   return (
     <div className="glb-viewer" aria-label={`${title} GLB viewer`}>
       <Canvas flat camera={{ position: [4, 3, 5], fov: 42 }} dpr={[1, 2]}>
-        <color attach="background" args={["#f2e8d9"]} />
-        <ambientLight intensity={0.24} />
-        <hemisphereLight args={["#fff8ef", "#c29b70", 0.5]} />
-        <directionalLight position={[4, 6, 5]} intensity={1.35} />
-        <directionalLight position={[-4, 3, -5]} intensity={0.26} color="#dfeaff" />
+        <color attach="background" args={["#777777"]} />
+        <ambientLight intensity={0.12} />
+        <hemisphereLight args={["#f4f4f2", "#555555", 0.35]} />
+        <directionalLight position={[4, 6, 5]} intensity={0.95} />
+        <directionalLight position={[-4, 3, -5]} intensity={0.18} color="#dfe7ee" />
         <Suspense
           fallback={
             <Html center>
@@ -183,7 +191,7 @@ function GlbViewer({ src, title }: { src: string; title: string }) {
           <Bounds fit clip observe margin={1.15}>
             <GlbModel src={src} />
           </Bounds>
-          <Environment preset="studio" environmentIntensity={0.34} />
+          <Environment preset="studio" environmentIntensity={0.2} />
         </Suspense>
         <OrbitControls makeDefault enableDamping dampingFactor={0.08} />
       </Canvas>
@@ -208,6 +216,19 @@ function ModelViewer({ mode, model }: { mode: "luma" | "glb"; model: ModelModalC
           />
         </div>
       )}
+    </div>
+  );
+}
+
+function IndividualRunsGrid({ videos }: { videos: NonNullable<VideoModalContent["relatedVideos"]> }) {
+  return (
+    <div className="fll-mini-runs" aria-label="Individual robot runs">
+      {videos.map((video) => (
+        <figure className="fll-mini-run" key={video.src}>
+          <video src={video.src} poster={video.poster} controls playsInline preload="metadata" title={video.title} />
+          <figcaption>{video.title}</figcaption>
+        </figure>
+      ))}
     </div>
   );
 }
@@ -276,7 +297,7 @@ function MediaModal({
                 onClick={() => setModelMode((value) => (value === "luma" ? "glb" : "luma"))}
                 aria-label={modelMode === "luma" ? "Switch to GLB viewer" : "Switch to Luma AI viewer"}
               >
-                {modelMode === "luma" ? "GLB Viewer" : "Luma AI Viewer"}
+                {modelMode === "luma" ? "Click here to see GLB Model" : "Click here to see Luma Model"}
               </button>
             ) : null}
             <button type="button" onClick={() => setIsFullscreen((value) => !value)} aria-label="Toggle fullscreen">
@@ -292,25 +313,20 @@ function MediaModal({
           {content.type === "video" ? (
             hasVideoGallery ? (
               <div className="fll-runs-gallery">
-                <section className="fll-full-run" aria-label="Full robot run">
-                  <h4>Full Robot Run</h4>
-                  <video
-                    className="fll-main-run-video"
-                    src={content.src}
-                    controls
-                    autoPlay
-                    playsInline
-                    onLoadedMetadata={(event) => updateVideoAspectRatio(event.currentTarget)}
-                  />
-                </section>
-                <div className="fll-mini-runs" aria-label="Individual robot runs">
-                  {content.relatedVideos?.map((video) => (
-                    <figure className="fll-mini-run" key={video.src}>
-                      <video src={video.src} controls playsInline preload="metadata" title={video.title} />
-                      <figcaption>{video.title}</figcaption>
-                    </figure>
-                  ))}
-                </div>
+                {!content.galleryOnly ? (
+                  <section className="fll-full-run" aria-label="Full robot run">
+                    <h4>Ideal Full Robot Run</h4>
+                    <video
+                      className="fll-main-run-video"
+                      src={content.src}
+                      controls
+                      autoPlay
+                      playsInline
+                      onLoadedMetadata={(event) => updateVideoAspectRatio(event.currentTarget)}
+                    />
+                  </section>
+                ) : null}
+                <IndividualRunsGrid videos={content.relatedVideos ?? []} />
               </div>
             ) : (
               <video
@@ -781,8 +797,12 @@ function RealCompetitions() {
 export default function Competitions() {
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
-  const openVideo = (title: string, src: string, relatedVideos?: VideoModalContent["relatedVideos"]) =>
-    setModalContent({ title, src, relatedVideos, type: "video" });
+  const openVideo = (
+    title: string,
+    src: string,
+    relatedVideos?: VideoModalContent["relatedVideos"],
+    galleryOnly = false
+  ) => setModalContent({ title, src, relatedVideos, galleryOnly, type: "video" });
   const openImage = (title: string, src: string, alt?: string) => setModalContent({ title, src, alt, type: "image" });
   const openModel = (title: string, lumaSrc: string, glbSrc?: string) => setModalContent({ title, lumaSrc, glbSrc, type: "model" });
 
@@ -831,6 +851,23 @@ export default function Competitions() {
             playsInline
             preload="metadata"
           />
+
+          <button
+            className="reference-action-button fll-2024-runs-hotspot"
+            type="button"
+            aria-label="View 2024 FLL individual robot runs"
+            onClick={() =>
+              openVideo(
+                "2024 FLL Robot Runs",
+                fll2024IndividualRuns[0].src,
+                fll2024IndividualRuns,
+                true
+              )
+            }
+          >
+            <PlayCircle aria-hidden="true" />
+            Click here to view individual runs!
+          </button>
 
           <button
             className="reference-action-button wro-2024-run-hotspot"

@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import Competitions from "./Competitions";
+import { CompetitionMediaPage } from "./CompetitionMediaPage";
 import Projects from "./Projects";
 import { StaticReferencePage, TestimonialPage } from "./ReferencePages";
 import { publicAsset } from "./assetPath";
@@ -21,7 +22,9 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavCompact, setIsNavCompact] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const navRightRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const isHiddenMediaPage = location.pathname.startsWith("/media/");
 
   // iOS-style spring physics for parallax effect
   const mouseX = useMotionValue(0);
@@ -90,6 +93,25 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const closeWhenClickingElsewhere = (event: PointerEvent) => {
+      if (!navRightRef.current?.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    const closeWhenScrolling = () => setIsMenuOpen(false);
+
+    document.addEventListener("pointerdown", closeWhenClickingElsewhere, true);
+    window.addEventListener("scroll", closeWhenScrolling, { passive: true });
+
+    return () => {
+      document.removeEventListener("pointerdown", closeWhenClickingElsewhere, true);
+      window.removeEventListener("scroll", closeWhenScrolling);
+    };
+  }, [isMenuOpen]);
+
   const moveNavSurface = (event: React.PointerEvent<HTMLElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - 0.5;
@@ -105,7 +127,7 @@ export default function App() {
   };
 
   return (
-    <main className="page-shell">
+    <main className={`page-shell${isHiddenMediaPage ? " media-route-shell" : ""}`}>
       <svg className="liquid-filter-svg" aria-hidden="true" focusable="false">
         <filter id="liquid-glass-refraction" x="-12%" y="-12%" width="124%" height="124%">
           <feTurbulence
@@ -149,6 +171,7 @@ export default function App() {
 
         <motion.div
           className="nav-right"
+          ref={navRightRef}
           onPointerLeave={settleNavSurface}
           onPointerMove={moveNavSurface}
           style={{ x: navShiftX, y: navShiftY }}
@@ -221,6 +244,14 @@ export default function App() {
           <Route path="/leaps" element={<StaticReferencePage page="leaps" />} />
           <Route path="/skills-development" element={<StaticReferencePage page="skills" />} />
           <Route path="/testimonial" element={<TestimonialPage />} />
+          <Route path="/media/2024-fll" element={<CompetitionMediaPage slug="2024-fll" />} />
+          <Route path="/media/2024-wro" element={<CompetitionMediaPage slug="2024-wro" />} />
+          <Route path="/media/2025-fll" element={<CompetitionMediaPage slug="2025-fll" />} />
+          <Route path="/media/2025-wro" element={<CompetitionMediaPage slug="2025-wro" />} />
+          <Route
+            path="/media/2025-wro-international"
+            element={<CompetitionMediaPage slug="2025-wro-international" />}
+          />
         </Routes>
       </div>
 

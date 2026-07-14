@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Link } from "react-router-dom";
 import { GlbViewer } from "./Competitions";
+import { HandleModelViewer } from "./Projects";
 import { publicAsset } from "./assetPath";
 
 type VideoItem = {
@@ -13,8 +14,9 @@ type VideoItem = {
 
 type ModelItem = {
   glbSrc?: string;
-  lumaSrc: string;
+  lumaSrc?: string;
   title: string;
+  viewer?: "water-bottle-handle";
 };
 
 type CompetitionShowcase = {
@@ -29,7 +31,8 @@ export type CompetitionMediaSlug =
   | "2024-wro"
   | "2025-fll"
   | "2025-wro"
-  | "2025-wro-international";
+  | "2025-wro-international"
+  | "water-bottle-handle";
 
 const video = (filename: string) => publicAsset(`/project-videos/${filename}`);
 
@@ -97,11 +100,23 @@ const showcases: Record<CompetitionMediaSlug, CompetitionShowcase> = {
       },
     ],
   },
+  "water-bottle-handle": {
+    competition: "2026 Personal Project",
+    layout: "single",
+    videos: [],
+    models: [
+      {
+        glbSrc: publicAsset("/models/Handle.glb"),
+        title: "Water Bottle Handle 3D Model",
+        viewer: "water-bottle-handle",
+      },
+    ],
+  },
 };
 
 function CompetitionModel({ competition, item }: { competition: string; item: ModelItem }) {
-  const [mode, setMode] = useState<"glb" | "luma">("luma");
-  const canSwitch = Boolean(item.glbSrc);
+  const [mode, setMode] = useState<"glb" | "luma">(item.lumaSrc ? "luma" : "glb");
+  const canSwitch = Boolean(item.glbSrc && item.lumaSrc);
 
   return (
     <article className="competition-media-card competition-model-card">
@@ -117,9 +132,11 @@ function CompetitionModel({ competition, item }: { competition: string; item: Mo
           </button>
         ) : null}
       </div>
-      {mode === "glb" && item.glbSrc ? (
+      {item.viewer === "water-bottle-handle" ? (
+        <HandleModelViewer showControlsHint={false} />
+      ) : mode === "glb" && item.glbSrc ? (
         <GlbViewer src={item.glbSrc} title={item.title} />
-      ) : (
+      ) : item.lumaSrc ? (
         <iframe
           allow="autoplay; fullscreen; xr-spatial-tracking"
           allowFullScreen
@@ -127,7 +144,7 @@ function CompetitionModel({ competition, item }: { competition: string; item: Mo
           src={item.lumaSrc}
           title={`${competition}: ${item.title} — Luma AI`}
         />
-      )}
+      ) : null}
       <p className="competition-model-controls">Left drag to rotate · Right drag to pan · Scroll to zoom</p>
     </article>
   );
@@ -135,6 +152,9 @@ function CompetitionModel({ competition, item }: { competition: string; item: Mo
 
 export function CompetitionMediaPage({ slug }: { slug: CompetitionMediaSlug }) {
   const showcase = showcases[slug];
+  const mediaTypeLabel = showcase.videos.length
+    ? `Videos${showcase.models?.length ? " and interactive 3D models" : ""}`
+    : "Interactive 3D model";
   const returnPointerX = useMotionValue(0);
   const returnPointerY = useMotionValue(0);
   const returnShiftX = useSpring(returnPointerX, { damping: 25, stiffness: 300, mass: 0.5 });
@@ -176,7 +196,7 @@ export function CompetitionMediaPage({ slug }: { slug: CompetitionMediaSlug }) {
       </motion.div>
       <header className="competition-media-header">
         <div className="competition-media-header-topline">
-          <span>Videos{showcase.models?.length ? " and interactive 3D models" : ""}</span>
+          <span>{mediaTypeLabel}</span>
         </div>
         <h1 id="competition-media-title">{showcase.competition}</h1>
       </header>
@@ -193,7 +213,11 @@ export function CompetitionMediaPage({ slug }: { slug: CompetitionMediaSlug }) {
         ))}
 
         {showcase.models?.map((item) => (
-          <CompetitionModel competition={showcase.competition} item={item} key={item.lumaSrc} />
+          <CompetitionModel
+            competition={showcase.competition}
+            item={item}
+            key={item.lumaSrc ?? item.glbSrc ?? item.title}
+          />
         ))}
       </div>
     </section>

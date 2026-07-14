@@ -82,7 +82,7 @@ function HandleModel() {
   return <primitive object={tunedScene} />;
 }
 
-function HandleModelViewer() {
+export function HandleModelViewer({ showControlsHint = true }: { showControlsHint?: boolean } = {}) {
   return (
     <div className="glb-viewer project-handle-viewer" aria-label="Water bottle handle GLB viewer">
       <Canvas flat camera={{ position: [4.2, 2.8, 4.8], fov: 38 }} dpr={[1, 2]}>
@@ -105,7 +105,7 @@ function HandleModelViewer() {
         </Suspense>
         <OrbitControls makeDefault enableDamping dampingFactor={0.08} />
       </Canvas>
-      <ModelControlsHint />
+      {showControlsHint ? <ModelControlsHint /> : null}
     </div>
   );
 }

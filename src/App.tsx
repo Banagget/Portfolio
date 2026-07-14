@@ -269,6 +269,10 @@ export default function App() {
             path="/media/2025-wro-international"
             element={<CompetitionMediaPage slug="2025-wro-international" />}
           />
+          <Route
+            path="/media/water-bottle-handle"
+            element={<CompetitionMediaPage slug="water-bottle-handle" />}
+          />
         </Routes>
       </div>
 

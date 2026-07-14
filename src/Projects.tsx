@@ -1,5 +1,6 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { publicAsset } from "./assetPath";
+import { ModelControlsHint } from "./ModelControlsHint";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Environment, Html, OrbitControls, useGLTF } from "@react-three/drei";
 import { Box, Maximize2, Minimize2, X } from "lucide-react";
@@ -104,6 +105,7 @@ function HandleModelViewer() {
         </Suspense>
         <OrbitControls makeDefault enableDamping dampingFactor={0.08} />
       </Canvas>
+      <ModelControlsHint />
     </div>
   );
 }

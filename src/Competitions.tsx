@@ -1,5 +1,6 @@
 import { Suspense, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { publicAsset } from "./assetPath";
+import { ModelControlsHint } from "./ModelControlsHint";
 import { Canvas } from "@react-three/fiber";
 import { Bounds, Environment, Html, OrbitControls, useGLTF } from "@react-three/drei";
 import { Box, ExternalLink, Maximize2, Minimize2, PlayCircle, X } from "lucide-react";
@@ -176,7 +177,7 @@ export function GlbViewer({ src, title }: { src: string; title: string }) {
   return (
     <div className="glb-viewer" aria-label={`${title} GLB viewer`}>
       <Canvas flat camera={{ position: [4, 3, 5], fov: 42 }} dpr={[1, 2]}>
-        <color attach="background" args={["#777777"]} />
+        <color attach="background" args={["#e3d3c0"]} />
         <ambientLight intensity={0.12} />
         <hemisphereLight args={["#f4f4f2", "#555555", 0.35]} />
         <directionalLight position={[4, 6, 5]} intensity={0.95} />
@@ -216,6 +217,7 @@ function ModelViewer({ mode, model }: { mode: "luma" | "glb"; model: ModelModalC
           />
         </div>
       )}
+      <ModelControlsHint embedded={!activeGlbSrc} />
     </div>
   );
 }

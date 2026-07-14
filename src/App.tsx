@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ArrowUp } from "lucide-react";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ArrowUp, Github } from "lucide-react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import Competitions from "./Competitions";
 import { CompetitionMediaPage } from "./CompetitionMediaPage";
@@ -29,10 +29,14 @@ export default function App() {
   // iOS-style spring physics for parallax effect
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const homePointerX = useMotionValue(0);
+  const homePointerY = useMotionValue(0);
 
   const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
+  const homeShiftX = useSpring(homePointerX, springConfig);
+  const homeShiftY = useSpring(homePointerY, springConfig);
 
   // Horizontal and vertical shift distances
   const navShiftX = useTransform(smoothX, (v) => v * (isMenuOpen ? 4 : 8));
@@ -126,6 +130,17 @@ export default function App() {
     setHoveredNav(null);
   };
 
+  const moveHomeSurface = (event: React.PointerEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    homePointerX.set(((event.clientX - rect.left) / rect.width - 0.5) * 10);
+    homePointerY.set(((event.clientY - rect.top) / rect.height - 0.5) * 8);
+  };
+
+  const settleHomeSurface = () => {
+    homePointerX.set(0);
+    homePointerY.set(0);
+  };
+
   return (
     <main className={`page-shell${isHiddenMediaPage ? " media-route-shell" : ""}`}>
       <svg className="liquid-filter-svg" aria-hidden="true" focusable="false">
@@ -160,7 +175,9 @@ export default function App() {
       >
         <motion.div 
           className="liquid-glass nav-home-button" 
-           
+          onPointerLeave={settleHomeSurface}
+          onPointerMove={moveHomeSurface}
+          style={{ x: homeShiftX, y: homeShiftY }}
           aria-current={location.pathname === "/" ? "page" : undefined}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.95 }}
@@ -272,6 +289,58 @@ export default function App() {
 }
 
 function HomePage() {
+  const emailAddress = "linzhiyuan0306@gmail.com";
+  const [isEmailVisible, setIsEmailVisible] = useState(false);
+  const [isEmailCopied, setIsEmailCopied] = useState(false);
+  const emailControlRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isEmailVisible) return;
+
+    const hideEmail = () => {
+      setIsEmailVisible(false);
+      setIsEmailCopied(false);
+    };
+    const hideOnOutsideClick = (event: PointerEvent) => {
+      if (!emailControlRef.current?.contains(event.target as Node)) hideEmail();
+    };
+    const hideOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") hideEmail();
+    };
+
+    document.addEventListener("pointerdown", hideOnOutsideClick, true);
+    window.addEventListener("scroll", hideEmail, { passive: true });
+    window.addEventListener("keydown", hideOnEscape);
+
+    return () => {
+      document.removeEventListener("pointerdown", hideOnOutsideClick, true);
+      window.removeEventListener("scroll", hideEmail);
+      window.removeEventListener("keydown", hideOnEscape);
+    };
+  }, [isEmailVisible]);
+
+  const toggleEmail = () => {
+    setIsEmailVisible((visible) => !visible);
+    setIsEmailCopied(false);
+  };
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(emailAddress);
+    } catch {
+      const temporaryInput = document.createElement("textarea");
+      temporaryInput.value = emailAddress;
+      temporaryInput.style.position = "fixed";
+      temporaryInput.style.opacity = "0";
+      document.body.appendChild(temporaryInput);
+      temporaryInput.select();
+      document.execCommand("copy");
+      temporaryInput.remove();
+    }
+
+    setIsEmailCopied(true);
+  };
+
   return (
     <>
       <section id="home" className="hero-section" aria-label="Home">
@@ -320,6 +389,58 @@ function HomePage() {
 
         <img className="bugatti-image" src={publicAsset("/Bugatti.png")} alt="Zhiyuan working on a blue LEGO Bugatti model" />
       </section>
+
+      <footer className="home-footer">
+        <p className="home-footer-built">Built with React • TypeScript • Framer Motion</p>
+
+        <div className="home-footer-socials" aria-label="Social links">
+          <a
+            className="home-footer-social home-footer-github"
+            href="https://github.com/Banagget"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open Zhiyuan's GitHub profile in a new tab"
+          >
+            <Github aria-hidden="true" />
+          </a>
+          <div className="home-footer-email-control" ref={emailControlRef}>
+            <button
+              className={`home-footer-social home-footer-gmail${isEmailVisible ? " is-open" : ""}`}
+              type="button"
+              onClick={toggleEmail}
+              aria-label={isEmailVisible ? "Hide Zhiyuan's email address" : "Show Zhiyuan's email address"}
+              aria-expanded={isEmailVisible}
+              aria-controls="home-footer-email"
+            >
+              <img src={publicAsset("/google-gmail.svg")} alt="" aria-hidden="true" />
+            </button>
+            <AnimatePresence>
+              {isEmailVisible ? (
+                <motion.div
+                  className="home-footer-email-bubble-shell"
+                  initial={{ opacity: 0, scale: 0.18, x: "-50%", y: 18 }}
+                  animate={{ opacity: 1, scale: 1, x: "-50%", y: 0 }}
+                  exit={{ opacity: 0, scale: 0.18, x: "-50%", y: 18 }}
+                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <button
+                    id="home-footer-email"
+                    className="home-footer-email-bubble"
+                    type="button"
+                    onClick={copyEmail}
+                    aria-label={`Copy ${emailAddress} to the clipboard`}
+                  >
+                    <span>{emailAddress}</span>
+                    <small aria-live="polite">{isEmailCopied ? "Copied!" : "Click to copy"}</small>
+                  </button>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <p className="home-footer-copyright">© 2026 ZHIYUAN • All rights reserved</p>
+      </footer>
     </>
   );
 }

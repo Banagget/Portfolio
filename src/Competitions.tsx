@@ -9,6 +9,21 @@ import { ReferenceImageStack } from "./ReferenceImageStack";
 
 const imageBase = publicAsset("/competitions/");
 const videoBase = publicAsset("/project-videos/");
+const videoPosterBase = `${videoBase}posters/`;
+
+const videoPosters: Record<string, string> = {
+  "FLL2025_RobotRun.mp4": "FLL2025_RobotRun.jpg",
+  "Scubathon_Demo.mp4": "Scubathon_Demo.jpg",
+  "WRO2024_RobotRun.mp4": "WRO2024_RobotRun.jpg",
+  "WRO2024_SQ4.mov": "WRO2024_SQ4.jpg",
+  "WRO2025_RobotRun.mp4": "WRO2025_RobotRun.jpg",
+  "WRO_International_RobotRun.mp4": "WRO_International_RobotRun.jpg",
+};
+
+function posterForVideo(src: string) {
+  const filename = src.split("/").pop();
+  return filename && videoPosters[filename] ? `${videoPosterBase}${videoPosters[filename]}` : undefined;
+}
 
 const scubathonLumaSrc =
   "https://lumalabs.ai/embed/6741b8ca-8649-41c9-8dc2-73d3f3278f77?mode=sparkles&background=%23ffffff&color=%23000000&showTitle=true&loadBg=true&logoPosition=bottom-left&infoPosition=bottom-right&cinematicVideo=undefined&showMenu=false";
@@ -31,6 +46,7 @@ type ImageModalContent = {
 
 type VideoModalContent = {
   galleryOnly?: boolean;
+  poster?: string;
   relatedVideos?: Array<{
     poster?: string;
     src: string;
@@ -51,6 +67,7 @@ type ModelModalContent = {
 type ModalContent = ImageModalContent | VideoModalContent | ModelModalContent;
 
 const fllIndividualRuns = Array.from({ length: 8 }, (_, index) => ({
+  poster: `${videoPosterBase}Run${index + 1}.jpg`,
   src: `${videoBase}Run${index + 1}.mp4`,
   title: `Run ${index + 1}`,
 }));
@@ -321,6 +338,7 @@ function MediaModal({
                     <video
                       className="fll-main-run-video"
                       src={content.src}
+                      poster={content.poster}
                       controls
                       autoPlay
                       playsInline
@@ -333,6 +351,7 @@ function MediaModal({
             ) : (
               <video
                 src={content.src}
+                poster={content.poster}
                 controls
                 autoPlay
                 playsInline
@@ -371,7 +390,7 @@ function RealCompetitions() {
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
   const openVideo = (title: string, src: string, relatedVideos?: VideoModalContent["relatedVideos"]) =>
-    setModalContent({ title, src, relatedVideos, type: "video" });
+    setModalContent({ title, src, poster: posterForVideo(src), relatedVideos, type: "video" });
   const openImage = (title: string, src: string, alt?: string) => setModalContent({ title, src, alt, type: "image" });
   const openModel = (title: string, lumaSrc: string, glbSrc?: string) => setModalContent({ title, lumaSrc, glbSrc, type: "model" });
 
@@ -804,7 +823,7 @@ export default function Competitions() {
     src: string,
     relatedVideos?: VideoModalContent["relatedVideos"],
     galleryOnly = false
-  ) => setModalContent({ title, src, relatedVideos, galleryOnly, type: "video" });
+  ) => setModalContent({ title, src, poster: posterForVideo(src), relatedVideos, galleryOnly, type: "video" });
   const openImage = (title: string, src: string, alt?: string) => setModalContent({ title, src, alt, type: "image" });
   const openModel = (title: string, lumaSrc: string, glbSrc?: string) => setModalContent({ title, lumaSrc, glbSrc, type: "model" });
 

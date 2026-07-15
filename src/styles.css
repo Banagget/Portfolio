@@ -2557,6 +2557,10 @@ h1 {
   aspect-ratio: 2049 / 7956;
 }
 
+.clce-reference-page .reference-sheet {
+  aspect-ratio: 1708 / 9118;
+}
+
 .reference-action-button {
   position: absolute;
   z-index: 8;

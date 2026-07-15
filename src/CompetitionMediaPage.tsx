@@ -35,15 +35,17 @@ export type CompetitionMediaSlug =
   | "water-bottle-handle";
 
 const video = (filename: string) => publicAsset(`/project-videos/${filename}`);
+const poster = (filename: string) => video(`posters/${filename}`);
 
 const fll2024Runs: VideoItem[] = Array.from({ length: 8 }, (_, index) => ({
-  poster: video(`posters/24run${index + 1}.jpg`),
+  poster: poster(`24run${index + 1}.jpg`),
   src: video(`24run${index + 1}.mp4`),
   title: `Run ${index + 1}`,
 }));
 
 const fll2025Runs: VideoItem[] = Array.from({ length: 8 }, (_, index) => ({
   layout: "individual",
+  poster: poster(`Run${index + 1}.jpg`),
   src: video(`Run${index + 1}.mp4`),
   title: `Run ${index + 1}`,
 }));
@@ -58,17 +60,27 @@ const showcases: Record<CompetitionMediaSlug, CompetitionShowcase> = {
     competition: "2024 World Robot Olympiad (WRO)",
     layout: "pair",
     videos: [
-      { src: video("WRO2024_RobotRun.mp4"), title: "Robot Run (Full Points)" },
-      { src: video("WRO2024_SQ4.mov"), title: "Side Quest 4" },
+      { poster: poster("WRO2024_RobotRun.jpg"), src: video("WRO2024_RobotRun.mp4"), title: "Robot Run (Full Points)" },
+      { poster: poster("WRO2024_SQ4.jpg"), src: video("WRO2024_SQ4.mov"), title: "Side Quest 4" },
     ],
   },
   "2025-fll": {
     competition: "2025 First Lego League (FLL)",
     layout: "fll",
     videos: [
-      { layout: "featured", src: video("FLL2025_RobotRun.mp4"), title: "Ideal Full Run (Full Points)" },
+      {
+        layout: "featured",
+        poster: poster("FLL2025_RobotRun.jpg"),
+        src: video("FLL2025_RobotRun.mp4"),
+        title: "Ideal Full Run (Full Points)",
+      },
       ...fll2025Runs,
-      { layout: "portrait", src: video("Scubathon_Demo.mp4"), title: "Scubathon Demo" },
+      {
+        layout: "portrait",
+        poster: poster("Scubathon_Demo.jpg"),
+        src: video("Scubathon_Demo.mp4"),
+        title: "Scubathon Demo",
+      },
     ],
     models: [
       {
@@ -80,17 +92,49 @@ const showcases: Record<CompetitionMediaSlug, CompetitionShowcase> = {
   "2025-wro": {
     competition: "2025 World Robot Olympiad (WRO)",
     layout: "single",
-    videos: [{ layout: "featured", src: video("WRO2025_RobotRun.mp4"), title: "Robot Run (Full Points)" }],
+    videos: [
+      {
+        layout: "featured",
+        poster: poster("WRO2025_RobotRun.jpg"),
+        src: video("WRO2025_RobotRun.mp4"),
+        title: "Robot Run (Full Points)",
+      },
+    ],
   },
   "2025-wro-international": {
     competition: "2025 World Robot Olympiad (WRO) — International",
     layout: "international",
     videos: [
-      { layout: "featured", src: video("WRO_International_RobotRun.mp4"), title: "International Robot Run (Full Points)" },
-      { layout: "mechanism", src: video("Grab and Lift.mp4"), title: "Grab and Lift Mechanism" },
-      { layout: "mechanism", src: video("Locking.mp4"), title: "Grabber Locking Mechanism" },
-      { layout: "mechanism", src: video("Hook.mp4"), title: "Hook Cam and Follower Mechanism" },
-      { layout: "mechanism", src: video("Ball Gate.mp4"), title: "Ball Gate Lever Linkage Mechanism" },
+      {
+        layout: "featured",
+        poster: poster("WRO_International_RobotRun.jpg"),
+        src: video("WRO_International_RobotRun.mp4"),
+        title: "International Robot Run (Full Points)",
+      },
+      {
+        layout: "mechanism",
+        poster: poster("Grab-and-Lift.jpg"),
+        src: video("Grab and Lift.mp4"),
+        title: "Grab and Lift Mechanism",
+      },
+      {
+        layout: "mechanism",
+        poster: poster("Locking.jpg"),
+        src: video("Locking.mp4"),
+        title: "Grabber Locking Mechanism",
+      },
+      {
+        layout: "mechanism",
+        poster: poster("Hook.jpg"),
+        src: video("Hook.mp4"),
+        title: "Hook Cam and Follower Mechanism",
+      },
+      {
+        layout: "mechanism",
+        poster: poster("Ball-Gate.jpg"),
+        src: video("Ball Gate.mp4"),
+        title: "Ball Gate Lever Linkage Mechanism",
+      },
     ],
     models: [
       {

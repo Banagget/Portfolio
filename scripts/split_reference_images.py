@@ -7,6 +7,7 @@ TILE_HEIGHT = 2048
 SOURCES = (
     Path("public/page-assets/competitions/reference-no-buttons.png"),
     Path("public/page-assets/projects/reference-no-buttons.png"),
+    Path("public/page-assets/clce/reference-no-buttons.png"),
 )
 
 

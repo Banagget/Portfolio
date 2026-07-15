@@ -2557,7 +2557,7 @@ h1 {
   aspect-ratio: 2049 / 7956;
 }
 
-.clce-reference-page .reference-sheet {
+.clce-reference-sheet {
   aspect-ratio: 1708 / 9118;
 }
 
@@ -2714,6 +2714,15 @@ h1 {
 }
 
 .projects-reference-sheet .reference-action-button {
+  --reference-action-gap: 0.82cqw;
+  --reference-action-icon-size: 3.3cqw;
+  --reference-action-padding: 0.45cqw 0.95cqw;
+  border-width: 0.18cqw;
+  font-size: 1.52cqw;
+}
+
+.clce-reference-sheet .reference-action-button {
+  --hotspot-min-height: 0px;
   --reference-action-gap: 0.82cqw;
   --reference-action-icon-size: 3.3cqw;
   --reference-action-padding: 0.45cqw 0.95cqw;

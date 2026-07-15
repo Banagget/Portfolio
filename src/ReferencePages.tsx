@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { Download, ExternalLink, Maximize2, Minimize2, X } from "lucide-react";
 import { publicAsset } from "./assetPath";
+import { ReferenceImageStack } from "./ReferenceImageStack";
 
 type StaticPageKey = "clce" | "leaps" | "skills";
+
+const clceReferenceTiles = Array.from({ length: 5 }, (_, index) => ({
+  src: publicAsset(`/page-assets/clce/tiles/reference-${String(index + 1).padStart(2, "0")}.webp`),
+  width: 1708,
+  height: index === 4 ? 926 : 2048,
+}));
 
 const staticPages: Record<
   StaticPageKey,
@@ -13,7 +20,9 @@ const staticPages: Record<
       src: string;
     };
     className: string;
+    sheetClassName?: string;
     src: string;
+    tiles?: typeof clceReferenceTiles;
   }
 > = {
   clce: {
@@ -23,7 +32,9 @@ const staticPages: Record<
       src: publicAsset("/page-assets/clce/2026VIACOF.jpg"),
     },
     className: "clce-reference-page",
+    sheetClassName: "clce-reference-sheet",
     src: publicAsset("/page-assets/clce/reference-no-buttons.png"),
+    tiles: clceReferenceTiles,
   },
   leaps: {
     alt: "LEAPS portfolio page",
@@ -101,8 +112,12 @@ export function StaticReferencePage({ page }: { page: StaticPageKey }) {
   return (
     <>
       <section className={`reference-page static-reference-page ${details.className}`} aria-label={details.alt}>
-        <div className="reference-sheet">
-          <img className="reference-sheet-image" src={details.src} alt={details.alt} loading="eager" decoding="async" />
+        <div className={`reference-sheet ${details.sheetClassName ?? ""}`}>
+          {details.tiles ? (
+            <ReferenceImageStack alt={details.alt} tiles={details.tiles} />
+          ) : (
+            <img className="reference-sheet-image" src={details.src} alt={details.alt} loading="eager" decoding="async" />
+          )}
           {details.certificate ? (
             <button
               className="reference-action-button clce-2026-via-certificate-hotspot"

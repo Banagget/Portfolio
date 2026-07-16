@@ -29,6 +29,8 @@ body,
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html,
@@ -1816,9 +1818,10 @@ h1 {
   }
 
   .hero-section {
+    width: 100%;
     height: auto;
     min-height: 720px;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     align-content: center;
     row-gap: 36px;
     padding: 110px 28px 60px;
@@ -1834,9 +1837,14 @@ h1 {
   }
 
   .about-section {
-    grid-template-columns: 1fr;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
     row-gap: 30px;
     padding: 40px 28px 112px;
+  }
+
+  .about-copy {
+    min-width: 0;
   }
 
   .about-copy h2 {
@@ -1844,6 +1852,7 @@ h1 {
   }
 
   .about-rule {
+    width: 100%;
     max-width: 100%;
   }
 
@@ -1853,8 +1862,11 @@ h1 {
   }
 
   .text-card {
+    width: 100%;
+    min-width: 0;
     padding: 16px 18px;
     border-radius: 12px;
+    overflow-wrap: anywhere;
   }
 
   .about-copy h3 {
@@ -1864,6 +1876,7 @@ h1 {
   .bugatti-image {
     justify-self: start;
     width: min(100%, 456px);
+    max-width: 100%;
     height: auto;
     aspect-ratio: 456 / 444;
     margin-top: 0;
@@ -2038,6 +2051,49 @@ h1 {
 
   .media-modal-backdrop {
     padding: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-section {
+    min-height: auto;
+    row-gap: 26px;
+    padding: 96px 18px 44px;
+  }
+
+  .hero-section h1 {
+    font-size: clamp(48px, 14vw, 60px);
+    line-height: 0.96;
+  }
+
+  .about-section {
+    row-gap: 24px;
+    padding: 32px 18px 76px;
+  }
+
+  .about-copy h2 {
+    margin-bottom: 10px;
+    font-size: clamp(38px, 10vw, 46px);
+  }
+
+  .about-copy p {
+    font-size: 16px;
+    line-height: 1.38;
+  }
+
+  .about-copy h3 {
+    margin-block: 18px 12px;
+    font-size: clamp(27px, 7.5vw, 34px);
+    line-height: 1.05;
+  }
+
+  .text-card {
+    padding: 14px 15px;
+  }
+
+  .home-footer {
+    gap: 16px;
+    padding: 28px 18px;
   }
 }
 

@@ -334,7 +334,7 @@ function MediaModal({
               <div className="fll-runs-gallery">
                 {!content.galleryOnly ? (
                   <section className="fll-full-run" aria-label="Full robot run">
-                    <h4>Ideal Full Robot Run</h4>
+                    <h4>Ideal Full Robot Run (Full Points)</h4>
                     <video
                       className="fll-main-run-video"
                       src={content.src}
@@ -894,7 +894,7 @@ export default function Competitions() {
             className="reference-action-button wro-2024-run-hotspot"
             type="button"
             aria-label="Watch 2024 WRO robot run"
-            onClick={() => openVideo("2024 WRO Robot Run", `${videoBase}WRO2024_RobotRun.mp4`)}
+            onClick={() => openVideo("2024 WRO Robot Run (Full Points)", `${videoBase}WRO2024_RobotRun.mp4`)}
           >
             <PlayCircle aria-hidden="true" />
             Click here to watch our robot run!
@@ -954,7 +954,7 @@ export default function Competitions() {
             className="reference-action-button wro-2025-run-hotspot"
             type="button"
             aria-label="Watch 2025 WRO robot run"
-            onClick={() => openVideo("2025 WRO Robot Run", `${videoBase}WRO2025_RobotRun.mp4`)}
+            onClick={() => openVideo("2025 WRO Robot Run (Full Points)", `${videoBase}WRO2025_RobotRun.mp4`)}
           >
             <PlayCircle aria-hidden="true" />
             Click here to watch our robot run!
@@ -972,7 +972,7 @@ export default function Competitions() {
             className="reference-action-button wro-international-run-hotspot"
             type="button"
             aria-label="Watch WRO International robot run"
-            onClick={() => openVideo("WRO International Robot Run", `${videoBase}WRO_International_RobotRun.mp4`)}
+            onClick={() => openVideo("WRO International Robot Run (Full Points)", `${videoBase}WRO_International_RobotRun.mp4`)}
           >
             <PlayCircle aria-hidden="true" />
             Click here to watch our robot run!

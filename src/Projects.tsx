@@ -11,10 +11,10 @@ const imageBase = publicAsset("/page-assets/projects/");
 const legacyImageBase = publicAsset("/projects/");
 const handleModelSrc = publicAsset("/models/Handle.glb");
 
-const projectReferenceTiles = Array.from({ length: 4 }, (_, index) => ({
-  src: publicAsset(`/page-assets/projects/tiles/reference-${String(index + 1).padStart(2, "0")}.webp`),
-  width: 2049,
-  height: index === 3 ? 1812 : 2048,
+const projectReferenceTiles = Array.from({ length: 5 }, (_, index) => ({
+  src: publicAsset(`/page-assets/projects/tiles-v3/reference-${String(index + 1).padStart(2, "0")}.webp`),
+  width: 1708,
+  height: index === 4 ? 1658 : 1660,
 }));
 
 type TunableMaterial = Material & {
